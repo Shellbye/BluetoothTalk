@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">BTalk</string>
+    <string name="action_settings">Settings</string>
+    <string name="add_new_friends">Add New Friends</string>
+    <string name="title_activity_scrolling">ScrollingActivity</string>
+    <string name="title_activity_msg">msg</string>
+</resources>
