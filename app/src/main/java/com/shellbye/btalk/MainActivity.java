@@ -21,7 +21,7 @@ import java.util.Set;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static String TAG = "MsgActivity";
+    private static String TAG = "MainActivity";
 
 
     @Override
@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.v("MainActivity", "In onCreateOptionsMenu");
+        Log.v(TAG, "In onCreateOptionsMenu");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        Log.v("MainActivity", "In onOptionsItemSelected");
+        Log.v(TAG, "In onOptionsItemSelected");
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (id == R.id.add_friends) {
             // goto add friends activity
-            Log.v("MainActivity", "click add friends");
+            Log.v(TAG, "click add friends");
             Intent intent = new Intent(MainActivity.this, AddFriendsActivity.class);
             startActivity(intent);
         }
@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             // Keep listening until exception occurs or a socket is returned
             while (true) {
                 try {
-                    Log.v("MsgActivity", "waiting for connection...");
+                    Log.v(TAG, "waiting for connection...");
                     socket = mmServerSocket.accept();
                 } catch (IOException e) {
                     break;
