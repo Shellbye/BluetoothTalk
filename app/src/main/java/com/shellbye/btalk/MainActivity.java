@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity {
                 }
                 // If a connection was accepted
                 Log.v(TAG, "Connected!!!!!!!!!");
-                Utils.Toast(MainActivity.this, "Connected");
                 try {
                     if (socket != null) {
                         // Do work to manage the connection (in a separate thread)

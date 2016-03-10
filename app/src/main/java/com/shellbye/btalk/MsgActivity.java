@@ -88,7 +88,6 @@ public class MsgActivity extends AppCompatActivity {
             // Get a BluetoothSocket to connect with the given BluetoothDevice
             try {
                 Log.v("MsgActivity", Constant.MY_UUID.toString());
-                Utils.Toast(MsgActivity.this, "Try to connect");
                 tmp = mmDevice.createRfcommSocketToServiceRecord(Constant.MY_UUID);
             } catch (IOException e) {
                 e.printStackTrace();
