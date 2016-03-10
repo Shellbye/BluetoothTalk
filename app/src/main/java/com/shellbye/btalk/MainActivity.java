@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        Log.v(TAG, "In onCreate");
+        Log.v(TAG, "In Main onCreate");
 
 
         // 获取已配对的设备列表
@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
 
         BTalkApplication.acceptThread = new AcceptThread();
         BTalkApplication.acceptThread.start();
+        BTalkApplication.APP_STATUS = Constant.LISTENING;
     }
 
 
@@ -125,11 +126,14 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     if (socket != null) {
                         // Do work to manage the connection (in a separate thread)
-//                        manageConnectedSocket(socket);
-                        mmServerSocket.close();
+                        BTalkApplication.talkThread = new TalkThread(socket, null);
+                        BTalkApplication.talkThread.start();
+                        BTalkApplication.APP_STATUS = Constant.CONNECTED;
+                        // 这里也许不应该close
+//                        mmServerSocket.close();
                         break;
                     }
-                } catch (IOException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             }

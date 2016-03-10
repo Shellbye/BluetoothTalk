@@ -16,6 +16,11 @@ import java.util.List;
 public class MsgAdapter extends ArrayAdapter<Msg> {
     private int resourceId;
 
+    public MsgAdapter(Context context, int textViewResourceId) {
+        super(context, textViewResourceId);
+        resourceId = textViewResourceId;
+    }
+
     public MsgAdapter(Context context, int textViewResourceId, List<Msg> objects) {
         super(context, textViewResourceId, objects);
         resourceId = textViewResourceId;
