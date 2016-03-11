@@ -1,5 +1,6 @@
 package com.shellbye.btalk;
 
+import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
@@ -21,9 +22,11 @@ public class BTService {
     ConnectThread connectThread;
     TalkThread talkThread;
     Handler mHandler;
+    BluetoothAdapter bluetoothAdapter;
 
     public BTService(Handler mHandler) {
         this.mHandler = mHandler;
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
     }
 
     public void startAndListen() {
@@ -36,7 +39,7 @@ public class BTService {
         acceptThread.cancel();
         connectThread = new ConnectThread(device);
         connectThread.start();
-        BTalkApplication.APP_STATUS = Constant.TRY_CONNECTTING;
+        BTalkApplication.APP_STATUS = Constant.TRY_CONNECTING;
     }
 
     public synchronized void connected(BluetoothSocket socket) {
@@ -58,6 +61,22 @@ public class BTService {
         talkThread.write(bytes);
     }
 
+    public void stop() {
+        if (acceptThread != null) {
+            acceptThread.cancel();
+            acceptThread = null;
+        }
+        if (connectThread != null) {
+            connectThread.cancel();
+            connectThread = null;
+        }
+        if (talkThread != null) {
+            talkThread.cancel();
+            talkThread = null;
+        }
+        BTalkApplication.APP_STATUS = Constant.NONE;
+    }
+
     private class AcceptThread extends Thread {
         private final BluetoothServerSocket mmServerSocket;
 
@@ -67,10 +86,9 @@ public class BTService {
             BluetoothServerSocket tmp = null;
             try {
                 Log.v(TAG, Constant.MY_UUID.toString());
-                tmp = BTalkApplication.getBluetoothAdapter()
-                        .listenUsingRfcommWithServiceRecord(
-                                BTalkApplication.getBluetoothAdapter().getName(),
-                                Constant.MY_UUID);
+                tmp = bluetoothAdapter.listenUsingRfcommWithServiceRecord(
+                        bluetoothAdapter.getName(),
+                        Constant.MY_UUID);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -92,7 +110,6 @@ public class BTService {
                 Log.v(TAG, "Server Connected!");
                 try {
                     if (socket != null) {
-                        // Do work to manage the connection (in a separate thread)
                         mHandler.obtainMessage(Constant.SERVER_CONNECTED, -1, -1, null)
                                 .sendToTarget();
                         // 这里不需要加锁是因为这里关闭的是serverSocket,
@@ -142,7 +159,7 @@ public class BTService {
 
         public void run() {
             // Cancel discovery because it will slow down the connection
-            BTalkApplication.getBluetoothAdapter().cancelDiscovery();
+            bluetoothAdapter.cancelDiscovery();
 
             try {
                 // Connect the device through the socket. This will block
@@ -165,6 +182,8 @@ public class BTService {
             synchronized (BTService.this) {
                 connectThread = null;
             }
+            mHandler.obtainMessage(Constant.CLIENT_CONNECTED, -1, -1, null)
+                    .sendToTarget();
 
             Log.v(TAG, "Client Connected!");
             connected(mmSocket);
@@ -228,6 +247,9 @@ public class BTService {
                             .sendToTarget();
                 } catch (IOException e) {
                     Log.e(TAG, "disconnected", e);
+                    mHandler.obtainMessage(Constant.LOST_CONNECTION, -1, -1, null)
+                            .sendToTarget();
+                    BTalkApplication.APP_STATUS = Constant.NONE;
                     break;
                 }
             }
@@ -242,6 +264,17 @@ public class BTService {
                         .sendToTarget();
             } catch (IOException e) {
                 Log.e(TAG, "Exception during write", e);
+                mHandler.obtainMessage(Constant.LOST_CONNECTION, -1, -1, null)
+                        .sendToTarget();
+                BTalkApplication.APP_STATUS = Constant.NONE;
+            }
+        }
+
+        public void cancel() {
+            try {
+                mmSocket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }

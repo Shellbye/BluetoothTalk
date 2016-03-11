@@ -26,7 +26,7 @@ public class FriendAdapter extends ArrayAdapter<Friend>{
     public View getView(int position, View convertView, ViewGroup parent) {
         Friend friend = getItem(position);
 
-        View view = LayoutInflater.from(getContext()).inflate(recourseId, null);
+        View view;
         ViewHolder viewHolder;
 
         // 缓存布局
@@ -35,7 +35,7 @@ public class FriendAdapter extends ArrayAdapter<Friend>{
 
             // 缓存控件,防止重复查找
             viewHolder = new ViewHolder();
-            viewHolder.imageView = (ImageView) view.findViewById(R.id.imageView);
+            viewHolder.addressView = (TextView) view.findViewById(R.id.addressView);
             viewHolder.nameView = (TextView) view.findViewById(R.id.nameView);
             view.setTag(viewHolder);
         } else {
@@ -43,17 +43,15 @@ public class FriendAdapter extends ArrayAdapter<Friend>{
             viewHolder = (ViewHolder) view.getTag();
         }
 
-
-        viewHolder.imageView.setImageResource(friend.getImageId());
+        viewHolder.addressView.setText(friend.getAddress());
         viewHolder.nameView.setText(friend.getName());
-
 
         return view;
     }
 
     // 防止每次在getView方法中都调用 View 的 findViewById()方法来获取一次控件的实例
     class ViewHolder {
-        ImageView imageView;
+        TextView addressView;
         TextView nameView;
     }
 }

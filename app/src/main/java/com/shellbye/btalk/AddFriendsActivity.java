@@ -22,6 +22,7 @@ public class AddFriendsActivity extends AppCompatActivity {
 
     List<Friend> friendList;
     FriendAdapter friendAdapter;
+    BluetoothAdapter bluetoothAdapter;
 
     ListView listView;
 
@@ -29,8 +30,9 @@ public class AddFriendsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friends);
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
-        BTalkApplication.getBluetoothAdapter().startDiscovery();
+        bluetoothAdapter.startDiscovery();
 
         // Register the BroadcastReceiver
         IntentFilter filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
