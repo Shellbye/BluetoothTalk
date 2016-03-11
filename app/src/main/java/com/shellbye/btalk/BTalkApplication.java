@@ -14,10 +14,8 @@ public class BTalkApplication extends Application {
 
     private static Context context;
     private static BluetoothAdapter bluetoothAdapter;
-    public static MainActivity.AcceptThread acceptThread;
-    public static MsgActivity.ConnectThread connectThread;
-    public static TalkThread talkThread;
     public static int APP_STATUS = Constant.LISTENING;
+    public static BTService service;
 
     @Override
     public void onCreate() {

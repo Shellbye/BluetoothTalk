@@ -12,7 +12,8 @@ public class Constant {
 
     public final static int LISTENING = 0;
     public final static int TRY_CONNECTTING = 1;
-    public final static int CONNECTED = 2;
+    public final static int CONNECTED = 21;
     public static final int MESSAGE_READ = 2;
     public static final int MESSAGE_WRITE = 3;
+    public static final int SERVER_CONNECTED = 4;
 }

@@ -1,8 +1,6 @@
 package com.shellbye.btalk;
 
 import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothServerSocket;
-import android.bluetooth.BluetoothSocket;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +13,6 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -55,10 +52,6 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
-        BTalkApplication.acceptThread = new AcceptThread();
-        BTalkApplication.acceptThread.start();
-        BTalkApplication.APP_STATUS = Constant.LISTENING;
     }
 
 
@@ -88,66 +81,5 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public class AcceptThread extends Thread {
-        private final BluetoothServerSocket mmServerSocket;
-
-        public AcceptThread() {
-            // Use a temporary object that is later assigned to mmServerSocket,
-            // because mmServerSocket is final
-            BluetoothServerSocket tmp = null;
-            try {
-                Log.v(TAG, Constant.MY_UUID.toString());
-                Utils.Toast(MainActivity.this, "waiting for connection...");
-                tmp = BTalkApplication.getBluetoothAdapter()
-                        .listenUsingRfcommWithServiceRecord(
-                                BTalkApplication.getBluetoothAdapter().getName(),
-                                Constant.MY_UUID);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            mmServerSocket = tmp;
-        }
-
-        public void run() {
-            BluetoothSocket socket = null;
-            // Keep listening until exception occurs or a socket is returned
-            while (true) {
-                try {
-                    Log.v(TAG, "waiting for connection...");
-                    socket = mmServerSocket.accept();
-                } catch (IOException e) {
-                    break;
-                }
-                // If a connection was accepted
-                Log.v(TAG, "Connected!!!!!!!!!");
-                try {
-                    if (socket != null) {
-                        // Do work to manage the connection (in a separate thread)
-                        BTalkApplication.talkThread = new TalkThread(socket, null);
-                        BTalkApplication.talkThread.start();
-                        BTalkApplication.APP_STATUS = Constant.CONNECTED;
-                        // 这里也许不应该close
-//                        mmServerSocket.close();
-                        break;
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        /**
-         * Will cancel the listening socket, and cause the thread to finish
-         */
-        public void cancel() {
-            try {
-                mmServerSocket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
     }
 }
